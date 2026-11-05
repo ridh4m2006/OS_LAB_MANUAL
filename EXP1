@@ -1,0 +1,400 @@
+Experiment 1: Linux Basics, Redirection & Process Management
+Directory & File Operations: Essential command syntax and options for navigating (pwd, cd), managing directories (mkdir -p/-v/-m, rmdir -p/-v), listing metadata (ls -lah), creating/updating files (touch -c/-t/-d), copying (cp -r/-i/-p), moving/renaming (mv -i/-n/-v), deleting (rm -rf/-i), viewing contents (cat -n/-b), and extracting line ranges (head, tail).
+I/O Redirection & Streams: Understanding standard streams (stdin 0, stdout 1, stderr 2), overwriting (>) vs. appending (>>), redirecting errors (2>), combining output and error streams (&>), and feeding file input (<).
+Pipes & Utilities: Stream chaining via pipes (|), alphabetical sorting (sort), deduplication (uniq), splitting output streams (tee), and converting stream inputs to command-line arguments (xargs).
+Pattern Searching (grep) & Finding Files (find): Text search flags (-i, -v, -c, -w, -n) alongside disk-wide searches filtering by size (-size), name/case (-name, -iname), user ownership (-user), and empty paths (-empty).
+Terminal Text Editors: Workflow modes, search, line management, and exit operations in modal (vim) and modeless (nano) environments.
+Process Management: Shell job control (jobs, bg, fg), process inspection (ps, ps -e, ps -ef, ps -p, ps aux), signal handling (kill -15 SIGTERM, kill -9 SIGKILL, kill -STOP, kill -CONT), CPU priority scheduling (nice, renice), and live diagnostic monitoring (top).
+Theory:
+Directory Operations
+pwd (Print Working Directory)
+● Description: Prints the full absolute path from the root directory to the current working
+location.
+● Syntax: pwd [OPTION]
+● Example: pwd
+● Output: /home/ubuntu
+cd (Change Directory)
+● Description: Navigates the terminal session to a different directory in the filesystem.
+● Syntax: cd [DIRECTORY]
+● System Example: cd /etc/netplan
+● Key Shortcuts:
+○ Move up one level: cd ..
+○ Previous directory: cd -
+○ Return to Home Directory (using shortcut): cd ~ (or simply cd)
+○ Return to Home Directory (without shortcut): cd /home/ubuntu (or cd $HOME)
+
+mkdir (Make Directory)
+● Description: Creates one or more new directories in the filesystem.
+● Syntax: mkdir [OPTION] DIRECTORY...
+● Standard Creation:
+○ Using ~: mkdir ~/scripts
+○ Without ~: mkdir /home/ubuntu/scripts
+● Useful Options:
+○ -p (Parents): Creates intermediate directories automatically.
+■ Using ~: mkdir -p ~/Documents/projects/app/src
+■ Without ~: mkdir -p /home/ubuntu/Documents/projects/app/src
+○ -v (Verbose): Prints confirmation for every created directory.
+■ Using ~: mkdir -v ~/Downloads/iso
+
+■ Without ~: mkdir -v /home/ubuntu/Downloads/iso
+○ -m (Mode): Sets octal permissions upon creation.
+■ Using ~: mkdir -m 700 ~/.ssh
+■ Without ~: mkdir -m 700 /home/ubuntu/.ssh
+● Modifying Permissions of an Existing Folder using chmod:
+○ Using ~: chmod 755 ~/Documents/projects
+○ Without ~: chmod 755 /home/ubuntu/Documents/projects
+
+rmdir (Remove Directory)
+● Description: Deletes empty directories safely.
+● Syntax: rmdir [OPTION] DIRECTORY...
+● Standard Removal:
+○ Using ~: rmdir ~/Templates
+○ Without ~: rmdir /home/ubuntu/Templates
+● Useful Options:
+○ -p (Parents): Removes empty directory chains.
+■ Using ~: rmdir -p ~/Documents/projects/app/src
+■ Without ~: rmdir -p /home/ubuntu/Documents/projects/app/src
+○ -v (Verbose): Confirms deletion.
+■ Using ~: rmdir -v ~/Downloads/iso
+■ Without ~: rmdir -v /home/ubuntu/Downloads/iso
+
+2. File Operations
+ls (List Directory Contents)
+● Description: Lists directory contents and metadata.
+● Syntax: ls [OPTION]... [FILE]...
+● Long Listing of Home (including hidden dotfiles):
+○ Using ~: ls -lah ~
+○ Without ~: ls -lah /home/ubuntu
+● Useful Options:
+○ -l (Long format): Displays file permissions, owner, group, size, and timestamp.
+○ -a (All): Shows hidden configuration files (e.g., .bashrc, .profile).
+○ -h (Human-readable): Renders file sizes in KB, MB, or GB.
+○ -t (Time): Sorts contents by modification date, newest first.
+○ -R (Recursive): Lists files across all nested subdirectories.
+
+touch
+● Description: Creates an empty file or updates the access/modification timestamps of an
+existing file.
+● Syntax: touch [OPTION]... FILE...
+● Standard Creation:
+○ Using ~: touch ~/.bash_aliases
+○ Without ~: touch /home/ubuntu/.bash_aliases
+● Useful Options:
+○ -c (No create): Refreshes timestamp only if the file exists.
+■ Using ~: touch -c ~/.bashrc
+■ Without ~: touch -c /home/ubuntu/.bashrc
+○ -t (Custom timestamp): Formats as [[CC]YY]MMDDhhmm[.ss].
+■ Using ~: touch -t 202601011200 ~/install.log
+■ Without ~: touch -t 202601011200 /home/ubuntu/install.log
+○ -d (Date string): Accepts flexible human-readable dates.
+■ Using ~: touch -d &quot;2026-04-23&quot; ~/release_notes.txt
+■ Without ~: touch -d &quot;2026-04-23&quot; /home/ubuntu/release_notes.txt
+■ Using ~: touch -d &quot;09:00&quot; ~/.bash_aliases
+■ Without ~: touch -d &quot;09:00&quot; /home/ubuntu/.bash_aliases
+
+cp (Copy)
+● Description: Copies files and directories from source to destination.
+● Syntax: cp [OPTION]... SOURCE... DEST
+● Standard Copy:
+○ Using ~: cp /etc/skel/.bashrc ~/.bashrc.bak
+○ Without ~: cp /etc/skel/.bashrc /home/ubuntu/.bashrc.bak
+● Useful Options:
+○ -r / -R (Recursive): Copies full directory trees.
+■ Using ~: cp -r /etc/netplan ~/backup_netplan
+■ Without ~: cp -r /etc/netplan /home/ubuntu/backup_netplan
+○ -i (Interactive): Prompts before overwriting existing files.
+■ Using ~: cp -i /etc/hosts ~/hosts
+■ Without ~: cp -i /etc/hosts /home/ubuntu/hosts
+○ -p (Preserve): Retains modes, ownership, and timestamps.
+■ Using ~: cp -p /etc/timezone ~/timezone_backup
+■ Without ~: cp -p /etc/timezone /home/ubuntu/timezone_backup
+
+mv (Move / Rename)
+
+● Description: Moves files or directories to new locations or renames them.
+● Syntax: mv [OPTION]... SOURCE... DEST
+● Standard Move / Rename:
+○ Using ~: mv ~/Desktop ~/Workspace
+○ Without ~: mv /home/ubuntu/Desktop /home/ubuntu/Workspace
+● Useful Options:
+○ -i (Interactive): Prompts before overwriting destination files.
+■ Using ~: mv -i ~/test.conf /etc/netplan/
+■ Without ~: mv -i /home/ubuntu/test.conf /etc/netplan/
+○ -n (No clobber): Prevents overwriting silently.
+■ Using ~: mv -n ~/.bashrc.bak ~/.bashrc
+■ Without ~: mv -n /home/ubuntu/.bashrc.bak /home/ubuntu/.bashrc
+○ -v (Verbose): Prints names of moved items.
+■ Using ~: mv -v ~/Downloads/*.deb ~/Packages/
+■ Without ~: mv -v /home/ubuntu/Downloads/*.deb /home/ubuntu/Packages/
+
+rm (Remove)
+● Description: Permanently deletes files and directories.
+● Syntax: rm [OPTION]... FILE...
+● System Directory Example: rm -rf /tmp/apt-* (Targets global system temp folder; no ~
+applicable)
+● Useful Options:
+○ -r (Recursive): Deletes directories and their contents.
+■ Using ~: rm -r ~/Downloads/temp_setup/
+■ Without ~: rm -r /home/ubuntu/Downloads/temp_setup/
+○ -f (Force): Suppresses prompts and missing-file errors.
+■ System path: rm -f /tmp/lockfile
+○ -i (Interactive): Asks confirmation before each deletion.
+■ Using ~: rm -i ~/.bash_history
+■ Without ~: rm -i /home/ubuntu/.bash_history
+
+cat (Concatenate)
+● Description: Outputs entire file contents to standard output.
+● Syntax: cat [OPTION]... [FILE]...
+● System Example: cat /etc/os-release
+● Useful Options:
+○ -n (Number): Numbers every line of output.
+■ Example: cat -n /etc/shells
+
+○ -b (Number non-blank): Numbers non-empty lines only.
+■ Example: cat -b /etc/issue
+
+head &amp; tail
+● Description: Displays the beginning or end of files and input streams.
+● Syntax: head -n [N] FILE | tail -n [N] FILE
+● System Inspection Examples:
+○ First 10 user accounts: head -n 10 /etc/passwd
+○ First 5 filesystem mounts: head -n 5 /etc/fstab
+○ Last 25 auth logs: tail -n 25 /var/log/auth.log
+○ Last 50 package install logs: tail -n 50 /var/log/dpkg.log
+GREP (Global Regular Expression Print)
+Terminal-based search tool functioning like Ctrl+F:
+● Case 1 (Ignoring case sensitivity -i): grep -i &quot;error&quot; logs.txt
+
+● Case 2 (Inverting matches -v): grep -v &quot;error&quot; logs.txt (excludes search terms)
+● Case 3 (Counting lines matching a profession -c): grep -c &quot;Doctor&quot; users.csv
+● Case 4 (Isolating exact words -w): grep -w &quot;Carly&quot; users.csv
+● Case 5 (Pinpointing line numbers -n): grep -n &quot;Carly&quot; users.csv
+1. jobs
+● What is jobs? Displays the jobs managed by the current shell, including jobs that are running
+in the background or stopped.
+
+● Why do we use it? When you start several programs from one terminal (sleep 100 &amp;, sleep
+200 &amp;, sleep 300 &amp;), jobs answers: &quot;Which jobs that I started from this terminal are still
+running?&quot;
+● Example:
+sleep 100 &amp;
+jobs
+Possible output: [1]+ Running sleep 100 &amp;
+○ [1] → Job ID
+○ Running → Job status
+○ sleep 100 → Command
+● Stopped-job example:
+Run sleep 100, then press Ctrl + Z. Output: [1]+ Stopped sleep 100. Now jobs shows the
+stopped job.
+● Job ID vs PID:
+In [1] 6721: 1 is Job ID (used by shell: fg %1, bg %1), 6721 is PID.
+● Real-life use: Running multiple background tasks and needing to quickly see their status
+without searching through the entire system process list.
+● Remember: jobs = Show jobs managed by my current shell.
+2. bg
+● What is bg? bg means background. It resumes a stopped job and lets it continue running in
+the background.
+● Why do we use it? When you temporarily stop a program with Ctrl + Z, you want it to
+continue running while giving your terminal back.
+● Example:
+Start sleep 100 → Press Ctrl + Z → jobs shows [1]+ Stopped sleep 100 → Run bg → jobs
+shows [1]+ Running sleep 100 &amp;.
+● Specific job: If job 2 is stopped: bg %2
+● Process flow: Running → Ctrl + Z → Stopped → bg → Running in background.
+● Remember: bg = Continue a stopped job in the background.
+3. fg
+● What is fg? fg means foreground. It brings a background or stopped job to the foreground.
+● Why do we use it? When a program is running in the background but you now want to
+interact with it through your terminal.
+● Example: sleep 100 &amp; → Check jobs → Run fg → The sleep job becomes the
+foreground job.
+● Specific job: fg %2 brings job 2 to foreground.
+
+● Relationship: Background → fg → Foreground.
+● Remember: fg = Bring a job to the foreground.
+4. ps
+● What is ps? ps stands for Process Status. It displays information about processes.
+● Why do we use it? When you want to know: &quot;What processes are associated with my current
+session?&quot;
+● Example: Run ps.
+Possible output:
+PID TTY TIME CMD
+5025 pts/0 00:00:00 bash
+6721 pts/0 00:00:00 sleep
+6764 pts/0 00:00:00 ps
+● Important columns:
+○ PID: Process ID
+○ TTY: Terminal associated with process
+○ TIME: CPU time used
+○ CMD: Command
+● Important observation: 5025 pts/0 bash means Bash is running as process 5025 and is
+associated with terminal pts/0.
+● Why is PID important? You can use it to manage a process: kill 6721.
+● Remember: ps = View process information.
+5. ps -e
+● What is it? ps -e shows all processes on the system.
+● Why do we use it? ps gives a limited session view, but Linux runs system services, network
+services, kernel processes, applications, and shells.
+● Example: Run ps -e.
+Possible output:
+1 ? 00:00:05 systemd
+2 ? 00:00:00 kthreadd
+500 ? 00:00:00 NetworkManager
+5025 pts/0 00:00:00 bash
+● Why so many processes? Linux uses processes for system/service management (systemd),
+networking (NetworkManager), SSH (sshd), shell (bash), and applications (firefox).
+● Remember: ps -e = Show all processes.
+6. ps -ef
+
+● What is it? ps -ef shows all processes in full-format detail.
+● Why do we use it? To discover process owner, PID, parent PID (PPID), start time, and
+launching command.
+● Example:
+UID PID PPID C STIME TTY TIME CMD
+root 1 0 0 20:00 ? 00:00:03 /sbin/init
+root 500 1 0 20:00 ? 00:00:00 sshd
+vboxuser 5025 500 0 21:00 pts/0 00:00:00 bash
+vboxuser 6721 5025 0 21:10 pts/0 00:00:00 sleep 100
+● Important columns:
+○ UID: User who owns the process (root, vboxuser).
+○ PID: Process ID (e.g., 6721).
+○ PPID: Parent Process ID. If PID 6721 has PPID 5025, bash (5025) spawned sleep
+(6721).
+○ C: CPU-related scheduling/accounting field.
+○ STIME: Process start time/date.
+○ TTY: Terminal associated (pts/0, pts/1, ?).
+○ TIME: CPU time consumed.
+○ CMD: Command used to start the process.
+● Real-life use: Inspecting unfamiliar process parentage: ps -p 5025 -f.
+● Remember: ps -ef = All processes + detailed information + parent/child relationship.
+7. ps -p PID
+● What is it? Select a process by PID.
+● Syntax: ps -p PID
+● Example: ps -p 6721
+● Why do we use it? Inspect one specific process and verify its identity before acting (e.g.,
+before kill 6721).
+● Detailed form: ps -p 6721 -f
+● Remember: ps -p PID = Check a specific process using its PID.
+8. ps -o pid,ni,cmd
+● What is it? Choose exactly which columns to display.
+● Meaning: pid = Process ID, ni = Nice value, cmd = Command.
+● Example output:
+PID NI CMD
+5025 0 bash
+7100 0 sleep 300
+7150 10 sleep 300
+
+● Why useful? Directly compare scheduling priority between normal process (NI = 0) and nice
+process (NI = 10).
+● Remember: ps -o = Customize which process information is displayed.
+9. ps aux
+● What is it? Shows processes with information particularly useful for resource monitoring.
+● Why do we use it? Answer: &quot;Which process is consuming CPU or memory?&quot;
+● Important columns: USER, PID, %CPU, %MEM, STAT, COMMAND.
+● Example:
+vboxuser 5200 95.0 2.0 R python3
+vboxuser 5300 3.0 25.0 S firefox
+● Important distinction:
+○ ps -ef → detailed process information / relationships.
+○ ps aux → CPU and memory/resource information.
+● Remember: ps aux = View processes with CPU and memory usage.
+10. kill
+● What is kill? Sends a signal to a process (does not simply mean &quot;destroy a process&quot;).
+● Syntax: kill PID (e.g., kill 6721). By default sends SIGTERM (signal 15).
+● Why do we use it? To control a process using signals.
+● Basic flow: Find process → Get PID → kill PID → Send SIGTERM → Process
+terminates normally.
+● Remember: kill = Send a signal to a process.
+11. kill -15 PID
+● What is signal 15? SIGTERM (Please terminate normally).
+● Why do we use it? Gives the application an opportunity to clean up before exiting (close files,
+save data, close connections, clean up, exit).
+● Note: kill PID and kill -15 PID are normally equivalent.
+● Remember: SIGTERM = Graceful termination request.
+12. kill -9 PID
+● What is signal 9? SIGKILL. Forces immediate termination.
+● Why do we use it? When a process doesn&#39;t respond to normal termination. SIGKILL cannot
+be caught, blocked, or ignored.
+● Difference: kill -15 = &quot;Please terminate&quot;; kill -9 = &quot;Terminate immediately&quot;.
+● Correct workflow: kill PID → Doesn&#39;t terminate? → kill -9 PID.
+
+● Caution: Application doesn&#39;t get an opportunity to perform cleanup.
+● Remember: kill -9 = Forcefully terminate a process.
+13. kill -l
+● What is it? Lists available signals.
+● Key signals:
+○ 1: SIGHUP (Hangup)
+○ 2: SIGINT (Interrupt)
+○ 9: SIGKILL (Force termination)
+○ 15: SIGTERM (Graceful termination)
+○ 18: SIGCONT (Continue)
+○ 19: SIGSTOP (Stop)
+● Remember: kill -l = List available signals.
+14. kill -STOP PID
+● What is it? Sends SIGSTOP to suspend a running process without terminating it.
+● Example: kill -STOP 7000. Flow: RUNNING → SIGSTOP → STOPPED. Process still exists
+in memory.
+● Important Lesson: Accidental execution on Bash shell (e.g., kill -STOP 4345) freezes
+terminal responsiveness.
+● Remember: SIGSTOP = Stop/pause a process.
+15. kill -CONT PID
+● What is it? Sends SIGCONT to continue a process that has been stopped.
+● Example: kill -CONT 7000. Flow: STOPPED → SIGCONT → RUNNING.
+● Remember: SIGCONT = Continue a stopped process.
+16. nice
+● What is nice? Starts a process with a specified nice value, influencing its CPU scheduling
+priority.
+● Why do we use it? Deprioritize CPU-heavy jobs relative to interactive processes.
+● Nice value range: -20 (more favorable) to 0 (default) to +19 (less favorable).
+○ Lower NI → more favorable scheduling; Higher NI → less favorable
+scheduling.
+
+● Experiment: nice -n 10 sleep 300 &amp; vs sleep 300 &amp;. Check with ps -o pid,ni,cmd.
+● Misconception: nice -n 10 does not mean run at 10% CPU; it sets scheduling priority weight.
+● Remember: nice = Start a process with a chosen nice value.
+
+17. renice
+● What is renice? Changes the nice value of an already running process.
+● Syntax: renice 10 -p PID.
+● nice vs renice:
+○ nice: Set nice value when starting a process.
+○ renice: Change nice value of an existing process.
+● Remember: renice = Change the nice value of an already-running process.
+18. top
+● What is top? Live, continuously updating view of system processes and resource usage.
+● Why top instead of ps? ps aux is a photograph/snapshot; top is live video with constant
+updates.
+● Interactive commands inside top:
+○ q: Exit top.
+○ k: Kill a process (prompts for PID and signal).
+○ c: Toggle short command name vs full command line.
+○ u: Filter processes by username.
+○ f: Manage fields/columns displayed.
+○ z: Toggle color display.
+○ b: Toggle highlighting of running processes.
+● Remember: top = Live monitoring of processes and system resources.
+
+9. The Complete Process-Management Picture
+● Job Control:
+○ jobs → See shell jobs
+○ bg → Continue stopped job in background
+○ fg → Bring job to foreground
+● Process Inspection:
+○ ps → Current session processes
+○ ps -e → All processes
+○ ps -ef → Detailed process information with PPID
+○ ps -p PID → One specific process
+○ ps aux → Processes + CPU/RAM information
+● Process Control:
+○ kill PID → SIGTERM (graceful)
+○ kill -15 PID → Graceful termination
+
+○ kill -9 PID → Forceful termination
+○ kill -STOP PID → Stop/pause
+○ kill -CONT PID → Continue
+○ kill -l → List signals
+● Process Priority:
+○ nice → Set priority when starting
+○ renice → Change priority after starting
+● Live Monitoring:
+○ top → Continuously monitor processes
