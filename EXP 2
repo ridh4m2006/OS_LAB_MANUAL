@@ -1,0 +1,7 @@
+Experiment 2: Combined Redirection & Stream Editor (sed)
+Command Chaining & Redirection: Sequentially running system utilities and logging user sessions (date; who > logged_users.txt).
+Stream Editor Core Concepts: Non-interactive line-by-line stream editing, suppressing automatic echoing (-n), and explicit line printing (p) by specific line number or range.
+Line Deletion: Removing targeted, initial, or final lines (d, 1d, $d) from output streams.
+Text Substitution: Basic search/replace (s/old/new/), first-occurrence vs. global matching (/g), and direct in-place file modifications with safe backups (-i, -i.bak).
+Regular Expressions & Anchors: Positional matching at line start (^) and end ($), any-character wildcards (.), non-space character sets ([^ ]*), and whitespace manipulation.
+Capture Groups & Backreferences: Isolate text segments with \(...\) and reorder or swap words dynamically using backreferences (\1, \2).
