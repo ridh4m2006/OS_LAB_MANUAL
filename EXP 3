@@ -1,0 +1,4 @@
+Experiment 3 : Shell automation, command-line parameter handling, and branching logic.
+Writing Bash scripts with positional parameters ($1, $#, $@), applying conditional evaluation operators (-f, -d, -s, -eq), iterating with for loops, and building two core utility scripts:
+check_type.sh: Distinguishes regular files (reporting size) from directories (listing contents).
+rename_upper.sh: Batch-renames all input filenames to uppercase.
